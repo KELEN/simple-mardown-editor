@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+
+		<link rel="stylesheet" href="css/jquery-layout-latest.css" />
+		<link rel="stylesheet" href="css/keditor.css"  />
+		<link rel="stylesheet" href="css/highlight/styles/default.css" />
+
+		<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery-layout-latest.js"></script>
+		<script src="js/Markdown.Converter.js"></script>
+		<script src="js/Markdown.Sanitizer.js"></script>
+		<script src="js/Markdown.Editor.js"></script>
+		<script src="js/highlight.pack.js"></script>
+
+		<style>
+			.wmd-button-row {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div class="ui-layout-north">
+			<div id="wmd-button-bar">
+			</div>
+		</div>
+		<textarea class="ui-layout-center" id="wmd-input"></textarea>
+		<div class="ui-layout-east" id="wmd-preview"></div>
+	</body>
+
+	<script>
+		$(document).ready(function() {
+
+			// CREATE THE LAYOUT
+			var myLayout = $('body').layout({
+				resizeWhileDragging: true,
+				sizable: true,
+				animatePaneSizing: true,
+				fxSpeed: 'slow',
+				east__size: "50%",
+				spacing_open: 0,
+				spacing_closed: 0,
+				east__spacing_closed: 10,
+				east__spacing_open: 3,
+				east__togglerLength_closed: 30,
+				east__togglerLength_open: 30,
+
+				north__size: 43,
+				north__spacing_closed: 3,
+				north__spacing_open: 3,
+				north__togglerLength_closed: 30,
+				north__togglerLength_open: 30,
+			});
+
+			var converter = new Markdown.Converter();
+			converter.hooks.chain("preConversion", function(text) {
+				return text.replace(/\b(a\w*)/gi, "*$1*");
+			});
+			converter.hooks.chain("plainLinkText", function(url) {
+				return "This is a link to " + url.replace(/^https?:\/\//, "");
+			});
+			var help = function() {
+				alert("Do you need help?");
+			}
+			var options = {
+				helpButton: {
+					handler: help
+				},
+				strings: {
+					quoteexample: "whatever you're quoting, put it right here"
+				}
+			};
+			var editor2 = new Markdown.Editor(converter, "", hljs, options);
+			editor2.run();
+
+			// 初始化高亮代码
+			hljs.initHighlightingOnLoad();
+		});
+	</script>
+
+</html>
